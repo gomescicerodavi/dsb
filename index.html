@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculadora Interativa</title>
+  <style>
+    :root {
+      --bg: #121212;
+      --panel: #1f1f1f;
+      --accent: #6b8cff;
+      --accent-2: #ff8c61;
+      --text: #ffffff;
+      --text-muted: #b0b0c5;
+      --shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', system-ui, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at top left, #3b4bff 0%, #121212 45%);
+      color: var(--text);
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .calculator {
+      width: min(520px, 100%);
+      background: linear-gradient(180deg, rgba(31,31,31,0.97), rgba(18,18,18,0.98));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .calculator__header {
+      padding: 32px 28px 18px;
+      display: grid;
+      gap: 14px;
+      background: rgba(255,255,255,0.03);
+      backdrop-filter: blur(14px);
+    }
+
+    .calculator__title {
+      font-size: clamp(1.7rem, 2.1vw, 2.4rem);
+      letter-spacing: -0.04em;
+    }
+
+    .calculator__subtitle {
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .calculator__content {
+      padding: 28px;
+      display: grid;
+      gap: 24px;
+    }
+
+    .row {
+      display: grid;
+      gap: 16px;
+    }
+
+    .field-group {
+      display: grid;
+      gap: 10px;
+    }
+
+    label {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    input[type='number'] {
+      width: 100%;
+      padding: 16px 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    input[type='number']:focus {
+      border-color: rgba(107,140,255,0.8);
+      transform: translateY(-1px);
+    }
+
+    .operations {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .operations button,
+    .actions button {
+      border: none;
+      border-radius: 16px;
+      padding: 16px 0;
+      font-size: 0.98rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+      color: var(--text);
+      background: rgba(255,255,255,0.05);
+    }
+
+    .operations button:hover,
+    .actions button:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+
+    .operations button.active,
+    .operations button.selected {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #fff;
+      box-shadow: 0 12px 24px rgba(107,140,255,0.35);
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .actions button {
+      flex: 1 1 140px;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .result {
+      padding: 24px;
+      border-radius: 24px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: grid;
+      gap: 10px;
+    }
+
+    .result__label {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .result__value {
+      font-size: clamp(2rem, 2.8vw, 3.8rem);
+      font-weight: 700;
+      word-break: break-word;
+    }
+
+    .helper {
+      color: #ffd9b8;
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 520px) {
+      .operations {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <article class="calculator">
+    <section class="calculator__header">
+      <h1 class="calculator__title">Calculadora Interativa</h1>
+      <p class="calculator__subtitle">Digite dois valores e escolha a operação. O resultado aparece instantaneamente.</p>
+    </section>
+
+    <section class="calculator__content">
+      <div class="row">
+        <div class="field-group">
+          <label for="valueA">Valor A</label>
+          <input id="valueA" type="number" step="any" placeholder="Ex: 12.5" value="0" />
+        </div>
+        <div class="field-group">
+          <label for="valueB">Valor B</label>
+          <input id="valueB" type="number" step="any" placeholder="Ex: 3" value="0" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="operations" role="group" aria-label="Operações matemáticas">
+          <button type="button" data-op="add" class="selected">+</button>
+          <button type="button" data-op="subtract">−</button>
+          <button type="button" data-op="multiply">×</button>
+          <button type="button" data-op="divide">÷</button>
+        </div>
+      </div>
+
+      <div class="result">
+        <span class="result__label">Resultado</span>
+        <span id="output" class="result__value">0</span>
+        <p class="helper">Use os botões ou altere os valores para ver a atualização instantânea.</p>
+      </div>
+
+      <div class="actions">
+        <button id="copyBtn" type="button">Copiar Resultado</button>
+        <button id="resetBtn" type="button">Limpar</button>
+      </div>
+    </section>
+  </article>
+
+  <script>
+    const valueA = document.getElementById('valueA');
+    const valueB = document.getElementById('valueB');
+    const output = document.getElementById('output');
+    const opButtons = document.querySelectorAll('.operations button');
+    const copyBtn = document.getElementById('copyBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    let currentOp = 'add';
+
+    function calculate() {
+      const a = parseFloat(valueA.value) || 0;
+      const b = parseFloat(valueB.value) || 0;
+      let result;
+
+      switch (currentOp) {
+        case 'add':
+          result = a + b;
+          break;
+        case 'subtract':
+          result = a - b;
+          break;
+        case 'multiply':
+          result = a * b;
+          break;
+        case 'divide':
+          result = b === 0 ? '∞' : a / b;
+          break;
+        default:
+          result = 0;
+      }
+
+      output.textContent = Number.isFinite(result) ? formatResult(result) : result;
+    }
+
+    function formatResult(value) {
+      const formatted = Number(value.toFixed(10));
+      return formatted.toString();
+    }
+
+    function setOperation(op) {
+      currentOp = op;
+      opButtons.forEach(button => {
+        button.classList.toggle('selected', button.dataset.op === op);
+      });
+      calculate();
+    }
+
+    opButtons.forEach(button => {
+      button.addEventListener('click', () => setOperation(button.dataset.op));
+    });
+
+    [valueA, valueB].forEach(input => {
+      input.addEventListener('input', calculate);
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(output.textContent);
+        copyBtn.textContent = 'Copiado!';
+        setTimeout(() => {
+          copyBtn.textContent = 'Copiar Resultado';
+        }, 1200);
+      } catch (err) {
+        copyBtn.textContent = 'Erro ao copiar';
+        setTimeout(() => {
+          copyBtn.textContent = 'Copiar Resultado';
+        }, 1200);
+      }
+    });
+
+    resetBtn.addEventListener('click', () => {
+      valueA.value = '0';
+      valueB.value = '0';
+      setOperation('add');
+      output.textContent = '0';
+    });
+
+    calculate();
+  </script>
+</body>
+</html>
